@@ -93,7 +93,7 @@ array[1..weekdays, 1..slots] of var -positions..positions: diffCover = [(i,j): c
 
 int: penBound = pow(floor(positions / 4),4);
 
-array[1..weekdays, 1..slots] of var -penBound..penBound: diffCoverPen = [(i,j): if diffCover[i,j] < 0 then pow(diffCover[i,j], 4) 
+array[1..weekdays, 1..slots] of var 0..penBound: diffCoverPen = [(i,j): if diffCover[i,j] < 0 then pow(diffCover[i,j], 4) 
                                                                                 else pow(diffCover[i,j], 2) endif | i in 1..weekdays, j in 1..slots];
 
 array[1..weekdays, 1..slots] of var -positions..positions: diffCoverSplit = [(i,j): coverSplit[i,j] - minCoverSplitBuffer[i,j]| i in 1..weekdays, j in 1..slots];
@@ -114,6 +114,8 @@ function var bool: check_frame_covers_slot(int: f, int: s) = frameProperties[f, 
 function var bool: check_frame_covers_slot_split(int: f, int: s) = if f = 14 then 7 < slot[s] + 1 /\ 40 > slot[s]
                                                                    elseif f = 15 then 10 < slot[s] + 1 /\ 44 > slot[s]
                                                                    else frameProperties[f, 1] < slot[s] + 1 /\ frameProperties[f, 2] > slot[s] endif;
+                                                                   
+function var int: check_if_undes_seq(int: p, int: w) = sum([if newRoster[p,w] = undesSeq[x,1] /\ next_day(p,w,roster[p,2],roster[p,3]) = undesSeq[x,2] then undesSeq[x,3] else 0 endif | x in 1..undesSeqs]);
 
 function var int: count_cost_of_slots() = sum([diffCoverPen[i,j] + pow(diffCoverSplit[i,j],2) | i in 1..weekdays, j in 1..slots]);
 
